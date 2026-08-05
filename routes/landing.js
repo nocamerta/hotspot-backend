@@ -57,9 +57,62 @@ router.post('/register', async (req, res) => {
 
     await sendConfirmation(channel_id, nama_lengkap.trim(), noTelpClean, result.insertId);
 
-    res.json({ ok: true, message: 'Silakan cek Telegram/WhatsApp untuk konfirmasi.' });
+    res.json({
+      ok: true,
+      message: 'Silakan cek Telegram/WhatsApp untuk konfirmasi.',
+      pendingId: result.insertId,
+    });
   } catch (err) {
     console.error('Error /register:', err.message);
+    res.status(500).json({ ok: false, message: 'Terjadi kesalahan server.' });
+  } finally {
+    if (conn) conn.release();
+  }
+});
+
+// GET /status/:id — dipoll landing page tiap beberapa detik untuk tahu
+// apakah user sudah tap konfirmasi di Telegram/WA, dan ambil kredensialnya.
+router.get('/status/:id', async (req, res) => {
+  const pendingId = parseInt(req.params.id, 10);
+  if (!pendingId) {
+    return res.status(400).json({ ok: false, message: 'ID tidak valid.' });
+  }
+
+  let conn;
+  try {
+    conn = await pool.getConnection();
+
+    const [pendingRows] = await conn.query(
+      `SELECT status, no_telp FROM pending_users WHERE id = ?`,
+      [pendingId]
+    );
+    if (pendingRows.length === 0) {
+      return res.status(404).json({ ok: false, message: 'Data tidak ditemukan.' });
+    }
+    const pending = pendingRows[0];
+
+    if (pending.status !== 'confirmed') {
+      return res.json({ ok: true, status: pending.status });
+    }
+
+    const [activeRows] = await conn.query(
+      `SELECT username, password, expired_at FROM active_users
+       WHERE no_telp = ? AND status = 'active' ORDER BY id DESC LIMIT 1`,
+      [pending.no_telp]
+    );
+    if (activeRows.length === 0) {
+      return res.json({ ok: true, status: 'confirmed_processing' });
+    }
+
+    res.json({
+      ok: true,
+      status: 'confirmed',
+      username: activeRows[0].username,
+      password: activeRows[0].password,
+      expired_at: activeRows[0].expired_at,
+    });
+  } catch (err) {
+    console.error('Error /status:', err.message);
     res.status(500).json({ ok: false, message: 'Terjadi kesalahan server.' });
   } finally {
     if (conn) conn.release();

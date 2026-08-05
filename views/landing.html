@@ -234,14 +234,99 @@
     <script src="/static/plugin/particles/particles-app.js"></script>
     <script src="/static/js/jquery.parallax-scroll.js"></script>
     <script src="/static/js/custom.js"></script>
+    <script src="/static/md5.js"></script>
 
     <script>
       const params = new URLSearchParams(window.location.search);
       const routerAsal = params.get('router') || 'unknown';
 
+      // Variabel bawaan MikroTik — hanya terisi kalau redirect dari alogin.html
+      // menyertakannya di URL. Kalau kosong (misal test langsung di browser),
+      // auto-login dilewati dan kredensial cukup ditampilkan di layar.
+      const chapId = params.get('chap-id') || '';
+      const chapChallenge = params.get('chap-challenge') || '';
+      const linkLoginOnly = params.get('link-login-only') || '';
+      const linkOrig = params.get('link-orig') || '';
+
       const form = document.getElementById('registerForm');
       const msgText = document.getElementById('formMsgText');
       const btn = document.getElementById('submitBtn');
+
+      let pollTimer = null;
+
+      function setMsg(text, ok) {
+        msgText.style.color = ok ? '#baffc9' : '#ffb3b3';
+        msgText.textContent = text;
+      }
+
+      function doHotspotLogin(username, password) {
+        if (!linkLoginOnly) {
+          // Tidak ada variabel MikroTik (bukan diakses lewat redirect hotspot asli)
+          setMsg('Terdaftar! Username: ' + username + ' — Password: ' + password, true);
+          return;
+        }
+
+        const loginForm = document.createElement('form');
+        loginForm.method = 'POST';
+        loginForm.action = linkLoginOnly;
+        loginForm.style.display = 'none';
+
+        const uInput = document.createElement('input');
+        uInput.name = 'username';
+        uInput.value = username;
+        loginForm.appendChild(uInput);
+
+        const pInput = document.createElement('input');
+        pInput.name = 'password';
+        if (chapId && chapChallenge && typeof hexMD5 === 'function') {
+          pInput.value = hexMD5(chapId + password + chapChallenge);
+        } else {
+          pInput.value = password;
+        }
+        loginForm.appendChild(pInput);
+
+        if (linkOrig) {
+          const dstInput = document.createElement('input');
+          dstInput.name = 'dst';
+          dstInput.value = linkOrig;
+          loginForm.appendChild(dstInput);
+        }
+
+        const popupInput = document.createElement('input');
+        popupInput.name = 'popup';
+        popupInput.value = 'true';
+        loginForm.appendChild(popupInput);
+
+        document.body.appendChild(loginForm);
+        setMsg('Menghubungkan ke internet...', true);
+        loginForm.submit();
+      }
+
+      function pollStatus(pendingId) {
+        pollTimer = setInterval(async () => {
+          try {
+            const res = await fetch('/status/' + pendingId);
+            const data = await res.json();
+            if (!data.ok) return;
+
+            if (data.status === 'confirmed' && data.username) {
+              clearInterval(pollTimer);
+              doHotspotLogin(data.username, data.password);
+            } else if (data.status === 'rejected') {
+              clearInterval(pollTimer);
+              setMsg('Pendaftaran dibatalkan. Silakan isi ulang jika perlu.', false);
+              btn.disabled = false;
+            } else if (data.status === 'expired') {
+              clearInterval(pollTimer);
+              setMsg('Waktu konfirmasi habis. Silakan daftar ulang.', false);
+              btn.disabled = false;
+            }
+            // status 'pending'/'confirmed_processing' -> lanjut nunggu, tidak perlu apa-apa
+          } catch (err) {
+            // koneksi sempat gagal, biarkan polling lanjut ke percobaan berikutnya
+          }
+        }, 3000);
+      }
 
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -261,13 +346,17 @@
             body: JSON.stringify(payload),
           });
           const data = await res.json();
-          msgText.style.color = data.ok ? '#baffc9' : '#ffb3b3';
-          msgText.textContent = data.message;
-          if (data.ok) form.reset();
+
+          if (!data.ok) {
+            setMsg(data.message, false);
+            btn.disabled = false;
+            return;
+          }
+
+          setMsg('Cek WhatsApp/Telegram kamu dan tap "Ya, benar" — halaman ini akan otomatis terhubung.', true);
+          pollStatus(data.pendingId);
         } catch (err) {
-          msgText.style.color = '#ffb3b3';
-          msgText.textContent = 'Gagal menghubungi server, coba lagi.';
-        } finally {
+          setMsg('Gagal menghubungi server, coba lagi.', false);
           btn.disabled = false;
         }
       });
