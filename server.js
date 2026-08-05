@@ -7,6 +7,12 @@ const { startExpiryJobs } = require('./jobs/expiry');
 const { startTelegramPolling } = require('./jobs/telegramPolling');
 
 const app = express();
+
+// Jaring pengaman: error async yang lolos dari try/catch tidak mematikan seluruh server
+process.on('unhandledRejection', (err) => {
+  console.error('[unhandledRejection]', err);
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

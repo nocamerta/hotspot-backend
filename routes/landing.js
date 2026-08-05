@@ -32,8 +32,10 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ ok: false, message: 'Nomor telepon tidak valid.' });
   }
 
-  const conn = await pool.getConnection();
+  let conn;
   try {
+    conn = await pool.getConnection();
+
     // Rate limit: max N request per hari per nomor
     const [rows] = await conn.query(
       `SELECT COUNT(*) AS total FROM pending_users
@@ -60,7 +62,7 @@ router.post('/register', async (req, res) => {
     console.error('Error /register:', err.message);
     res.status(500).json({ ok: false, message: 'Terjadi kesalahan server.' });
   } finally {
-    conn.release();
+    if (conn) conn.release();
   }
 });
 
