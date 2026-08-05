@@ -4,6 +4,7 @@ const express = require('express');
 const landingRoutes = require('./routes/landing');
 const webhookRoutes = require('./routes/webhook');
 const { startExpiryJobs } = require('./jobs/expiry');
+const { startTelegramPolling } = require('./jobs/telegramPolling');
 
 const app = express();
 app.use(express.json());
@@ -21,4 +22,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server jalan di port ${PORT}`);
   startExpiryJobs();
+  startTelegramPolling();
 });
