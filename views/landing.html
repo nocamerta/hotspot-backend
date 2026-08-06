@@ -149,6 +149,16 @@
 
               <div class="subscribe-block">
                 <div class="card-block py-lg px-md">
+
+                  <div class="row m-15px-b" style="margin-left:0; margin-right:0;">
+                    <div class="col-6" style="padding:0;">
+                      <button type="button" id="tabRegisterBtn" class="btn btn-block btn-light" style="border-radius:4px 0 0 4px;">Daftar Baru</button>
+                    </div>
+                    <div class="col-6" style="padding:0;">
+                      <button type="button" id="tabLoginBtn" class="btn btn-block" style="border-radius:0 4px 4px 0; background:transparent; border:1px solid #fff; color:#fff;">Sudah Punya Akun</button>
+                    </div>
+                  </div>
+
                   <form id="registerForm" class="md-form form-light" role="form">
                     <div class="row">
                       <div class="col-md-6">
@@ -181,6 +191,40 @@
                       </div>
                     </div>
                   </form>
+
+                  <form id="loginForm" class="md-form form-light" role="form" style="display:none;">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="loginUsername" class="form-label">Username</label>
+                          <div class="md-form-line-wrap">
+                            <input id="loginUsername" type="text" placeholder="Username" class="form-control" required>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="loginPassword" class="form-label">Password</label>
+                          <div class="md-form-line-wrap">
+                            <input id="loginPassword" type="text" placeholder="Password" class="form-control" required>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <div id="loginMsg" style="min-height:20px;">
+                            <font id="loginMsgText" style="color:#ffffffe8"></font>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <button type="submit" id="loginBtn" class="btn btn-block btn-light">
+                          <span class="btn-elem-wrap"><span class="text" style="color: darkblue">MASUK</span></span>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+
                 </div>
               </div>
             </div>
@@ -252,6 +296,33 @@
       const msgText = document.getElementById('formMsgText');
       const btn = document.getElementById('submitBtn');
 
+      const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+      const tabLoginBtn = document.getElementById('tabLoginBtn');
+      const loginForm = document.getElementById('loginForm');
+      const loginMsgText = document.getElementById('loginMsgText');
+      const loginBtn = document.getElementById('loginBtn');
+
+      function showRegisterTab() {
+        form.style.display = '';
+        loginForm.style.display = 'none';
+        tabRegisterBtn.className = 'btn btn-block btn-light';
+        tabRegisterBtn.style = 'border-radius:4px 0 0 4px;';
+        tabLoginBtn.className = 'btn btn-block';
+        tabLoginBtn.style = 'border-radius:0 4px 4px 0; background:transparent; border:1px solid #fff; color:#fff;';
+      }
+
+      function showLoginTab() {
+        form.style.display = 'none';
+        loginForm.style.display = '';
+        tabLoginBtn.className = 'btn btn-block btn-light';
+        tabLoginBtn.style = 'border-radius:0 4px 4px 0;';
+        tabRegisterBtn.className = 'btn btn-block';
+        tabRegisterBtn.style = 'border-radius:4px 0 0 4px; background:transparent; border:1px solid #fff; color:#fff;';
+      }
+
+      tabRegisterBtn.addEventListener('click', showRegisterTab);
+      tabLoginBtn.addEventListener('click', showLoginTab);
+
       let pollTimer = null;
 
       function setMsg(text, ok) {
@@ -259,22 +330,28 @@
         msgText.textContent = text;
       }
 
-      function doHotspotLogin(username, password) {
+      function doHotspotLogin(username, password, targetMsgEl) {
+        const showMsg = (text, ok) => {
+          const el = targetMsgEl || msgText;
+          el.style.color = ok ? '#baffc9' : '#ffb3b3';
+          el.textContent = text;
+        };
+
         if (!linkLoginOnly) {
           // Tidak ada variabel MikroTik (bukan diakses lewat redirect hotspot asli)
-          setMsg('Terdaftar! Username: ' + username + ' — Password: ' + password, true);
+          showMsg('Terdaftar! Username: ' + username + ' — Password: ' + password, true);
           return;
         }
 
-        const loginForm = document.createElement('form');
-        loginForm.method = 'POST';
-        loginForm.action = linkLoginOnly;
-        loginForm.style.display = 'none';
+        const loginFormEl = document.createElement('form');
+        loginFormEl.method = 'POST';
+        loginFormEl.action = linkLoginOnly;
+        loginFormEl.style.display = 'none';
 
         const uInput = document.createElement('input');
         uInput.name = 'username';
         uInput.value = username;
-        loginForm.appendChild(uInput);
+        loginFormEl.appendChild(uInput);
 
         const pInput = document.createElement('input');
         pInput.name = 'password';
@@ -283,23 +360,23 @@
         } else {
           pInput.value = password;
         }
-        loginForm.appendChild(pInput);
+        loginFormEl.appendChild(pInput);
 
         if (linkOrig) {
           const dstInput = document.createElement('input');
           dstInput.name = 'dst';
           dstInput.value = linkOrig;
-          loginForm.appendChild(dstInput);
+          loginFormEl.appendChild(dstInput);
         }
 
         const popupInput = document.createElement('input');
         popupInput.name = 'popup';
         popupInput.value = 'true';
-        loginForm.appendChild(popupInput);
+        loginFormEl.appendChild(popupInput);
 
-        document.body.appendChild(loginForm);
-        setMsg('Menghubungkan ke internet...', true);
-        loginForm.submit();
+        document.body.appendChild(loginFormEl);
+        showMsg('Menghubungkan ke internet...', true);
+        loginFormEl.submit();
       }
 
       function pollStatus(pendingId) {
@@ -359,6 +436,26 @@
           setMsg('Gagal menghubungi server, coba lagi.', false);
           btn.disabled = false;
         }
+      });
+
+      loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        loginBtn.disabled = true;
+        loginMsgText.textContent = '';
+
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+
+        if (!username || !password) {
+          loginMsgText.style.color = '#ffb3b3';
+          loginMsgText.textContent = 'Username dan password wajib diisi.';
+          loginBtn.disabled = false;
+          return;
+        }
+
+        // Langsung submit ke hotspot — MikroTik/RADIUS yang validasi.
+        // Kalau salah, user akan diarahkan MikroTik ke halaman gagal login (rlogin.html).
+        doHotspotLogin(username, password, loginMsgText);
       });
     </script>
   </body>

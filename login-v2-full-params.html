@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"></head>
+<body>
+
+<input type="hidden" id="f-chapid" value="$(chap-id)">
+<input type="hidden" id="f-chapchallenge" value="$(chap-challenge)">
+<input type="hidden" id="f-linkloginonly" value="$(link-login-only)">
+<input type="hidden" id="f-linkorig" value="$(link-orig)">
+<input type="hidden" id="f-mac" value="$(mac)">
+<input type="hidden" id="f-ip" value="$(ip)">
+
+<script type="text/javascript">
+  var params = new URLSearchParams();
+  params.set('router', 'r1_krs');
+  params.set('mac', document.getElementById('f-mac').value);
+  params.set('ip', document.getElementById('f-ip').value);
+  params.set('link-login-only', document.getElementById('f-linkloginonly').value);
+  params.set('link-orig', document.getElementById('f-linkorig').value);
+
+  var chapId = document.getElementById('f-chapid').value;
+  var chapChallenge = document.getElementById('f-chapchallenge').value;
+  if (chapId) {
+    params.set('chap-id', chapId);
+    params.set('chap-challenge', chapChallenge);
+  }
+
+  window.location.href = 'http://103.178.13.21/landing?' + params.toString();
+</script>
+</body>
+</html>
