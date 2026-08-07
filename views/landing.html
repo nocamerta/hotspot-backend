@@ -21,6 +21,8 @@
       .price-body { flex: 1; }
       #home .container { padding-left: 30px; padding-right: 30px; }
       #home-img { max-width: 480px; width: 100%; margin: 0 auto; display: block; }
+      #contact .row { align-items: stretch; }
+      #contact .contact-info { height: 100%; display: flex; flex-direction: column; justify-content: center; }
       @media (max-width: 991px) {
         #home .col-lg-5 { text-align: center; }
         #home-img { max-width: 320px; margin-top: 30px; }
@@ -249,16 +251,16 @@
           <div class="section-title-01 text-center">
             <h2 class="dark-color font-alt">Kontak</h2>
           </div>
-          <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5 m-15px-b">
-              <div class="contact-info">
+          <div class="row justify-content-center align-items-stretch" style="row-gap:20px;">
+            <div class="col-md-6 col-lg-4">
+              <div class="contact-info" style="height:100%; box-sizing:border-box;">
                 <i class="theme-color ti-location-pin"></i>
                 <h6 class="dark-color font-alt">Alamat</h6>
                 <p>Perum. Griya Jambean Asri, Jl. Diponegoro No. 123, RT.02 RW.04, Dusun Ngerombeh, Desa Jambean, Kecamatan Kras, Kabupaten Kediri</p>
               </div>
             </div>
-            <div class="col-md-6 col-lg-5 m-15px-b">
-              <div class="contact-info" id="kontakkami">
+            <div class="col-md-6 col-lg-4">
+              <div class="contact-info" id="kontakkami" style="height:100%; box-sizing:border-box;">
                 <i class="theme-color ti-mobile"></i>
                 <h6 class="dark-color font-alt">Customer Service</h6>
                 <p>+62 811-3500-836</p>
