@@ -1,45 +1,51 @@
-﻿<!doctype html>
-<html lang="zxx">
+<!doctype html>
+<html lang="id">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description" content="Axoma">
-    <meta name="keywords" content="Axoma">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="Amerta Free Wifi">
     <title>Amerta Free Wifi</title>
     <link rel="icon" type="image/svg+xml" href="/static/img/logoamerta.svg">
-    <link href="static\plugin\bootstrap\css\bootstrap.min.css" rel="stylesheet">
-    <link href="static\plugin\font-awesome\css\fontawesome-all.min.css" rel="stylesheet">
-    <link href="static\plugin\et-line\style.css" rel="stylesheet">
-    <link href="static\plugin\themify-icons\themify-icons.css" rel="stylesheet">
-    <link href="static\plugin\owl-carousel\css\owl.carousel.min.css" rel="stylesheet">
-    <link href="static\plugin\magnific\magnific-popup.css" rel="stylesheet">
-    <link href="static\css\style.css" rel="stylesheet">
-    <link href="static\css\color\default.css" rel="stylesheet" id="color_theme">
+    <link href="/static/plugin/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/plugin/font-awesome/css/fontawesome-all.min.css" rel="stylesheet">
+    <link href="/static/plugin/et-line/style.css" rel="stylesheet">
+    <link href="/static/plugin/themify-icons/themify-icons.css" rel="stylesheet">
+    <link href="/static/plugin/owl-carousel/css/owl.carousel.min.css" rel="stylesheet">
+    <link href="/static/plugin/magnific/magnific-popup.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/color/default.css" rel="stylesheet" id="color_theme">
+    <style>
+      /* Perbaikan responsif tambahan */
+      .price-table-01 { height: 100%; display: flex; flex-direction: column; }
+      .price-body { flex: 1; }
+      #home .container { padding-left: 30px; padding-right: 30px; }
+      #home-img { max-width: 480px; width: 100%; margin: 0 auto; display: block; }
+      #contact .row { align-items: stretch; }
+      #contact .contact-info { height: 100%; }
+      #contact .contact-info::before, #contact .contact-info::after { display: none !important; content: none !important; }
+      #price .price-value { white-space: normal; }
+      #price .price-value span.mo { display: block; margin-top: 2px; }
+      @media (min-width: 992px) and (max-width: 1199px) {
+        #price .price-value { font-size: 28px; line-height: 1.3; }
+      }
+      #home .col-lg-5 { text-align: center; }
+      #home .subscribe-block, #home .card-block { max-width: auto; margin-left: auto; margin-right: auto; }
+      @media (max-width: 991px) {
+        #home-img { max-width: 320px; margin-top: 30px; }
+      }
+      @media (max-width: 767px) {
+        .home-banner-03 { padding-top: 40px; padding-bottom: 40px; }
+        #home h1 { font-size: 1.8rem; }
+        #price .container { padding-left: 20px; padding-right: 20px; }
+        #price h4 { font-size: 0.95rem !important; }
+        #price { margin-top: 40px; }
+      }
+      img { max-width: 100%; height: auto; }
+    </style>
   </head>
 
   <body data-spy="scroll" data-target="#navbar" data-offset="98">
-    $(if chap-id)
-    <form name="sendin" action="$(link-login-only)" method="post">
-      <input type="hidden" name="username" />
-      <input type="hidden" name="password" />
-      <input type="hidden" name="dst" value="$(link-orig)" />
-      <input type="hidden" name="popup" value="true" />
-    </form>
-    <script type="text/javascript" src="/md5.js"></script>
-    <script type="text/javascript">
-    <!--
-        function doLogin() {
-      document.sendin.username.value = document.login.username.value;
-      document.sendin.password.value = hexMD5('$(chap-id)' + document.login.password.value + '$(chap-challenge)');
-      document.sendin.submit();
-      return false;
-        }
-    //-->
-    </script>
-    $(endif)
-
 
     <div id="loading">
       <div class="load-circle"><span class="one"></span></div>
@@ -48,289 +54,434 @@
       <nav class="navbar header-nav navbar-expand-lg">
         <div class="container">
           <a class="navbar-brand" href="#">
-            <img class="light-logo" src="static\img\logoamerta.svg" title="" alt="">
-            <img class="dark-logo" src="static\img\logoamerta.svg" title="" alt="">
+            <img class="light-logo" src="/static/img/logoamerta.svg" title="" alt="">
+            <img class="dark-logo" src="/static/img/logoamerta.svg" title="" alt="">
             <p style="font-size: 20px;" class="dark-color font-alt">PT. AMERTA ASA MEDIA</p>
           </a>
-
         </div>
-      </nav> 
+      </nav>
     </header>
+
     <main>
 
-      <section id="price" class="section shapes-section gray-bg ">
+      <section id="price" class="section shapes-section gray-bg">
         <div class="container">
-            <div class="row m-45px-b sm-m-25px-b">
-                <div class="col-lg-5 col-md-10">
-                  <div class="section-title-01">
-                    <br>
-              <div class="col-md-100 text-center">
-                <div class="price-table-01">
-                  <div class="price-header">
-                    <h4 class="price-title font-alt dark-color">UNTUK MENIKMATI LAYANAN WIFI GRATIS SILAKAN SCROLL DAN LOGIN DIBAWAH</h4>
-                  </div>
-                </div>
+          <div class="row m-45px-b sm-m-25px-b justify-content-center">
+            <div class="col-12 col-lg-8 text-center">
+              <div style="width:100%; max-width:600px; margin:0 auto; background:#fff; padding:18px 28px; border-radius:8px; box-sizing:border-box;">
+                <h4 class="dark-color font-alt" style="font-size:1.05rem; line-height:1.5; margin:0;">UNTUK MENIKMATI LAYANAN WIFI GRATIS SILAKAN SCROLL DAN DAFTAR DIBAWAH</h4>
               </div>
-                    
-                  </div>
-                  <br><br>
-                  <h2 class="dark-color font-alt text-center">Daftar Paket</h2>
-                </div>
-              </div>
-              <div class="row">
-
-              <div class="col-md-6 col-lg-4 m-15px-tb">
-                <div class="price-table-01 theme-bg active">
-                  <div class="price-header">
-                    <div class="price-value white-color"><span>Rp</span>133.000<span class="mo">/Bulan</span></div>
-                  </div>
-                  <div class="price-body">
-                    <ul class="white-color-light">
-                      <li><h3>15 Mbps</h3></li>
-                      <li>Unlimited Kuota</li>
-                    </ul>
-                  </div>
-                  <div class="price-footer">
-                    <a href="#kontakkami" class="btn btn-t-white" rel="noopener noreferrer">Kontak Kami</a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-4 m-15px-tb">
-                <div class="price-table-01 theme-bg active">
-                  <div class="price-header">
-                    <div class="price-value white-color"><span>Rp</span>166.500<span class="mo">/Bulan</span></div>
-                  </div>
-                  <div class="price-body">
-                    <ul class="white-color-light">
-                      <li><h3>30 Mbps</h3></li>
-                      <li>Unlimited Kuota</li>
-                      <li><h3>BEST SELLER</h3></li>
-                    </ul>
-                  </div>
-                  <div class="price-footer">
-                    <a href="#kontakkami" class="btn btn-t-white" rel="noopener noreferrer">Kontak Kami</a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-4 m-15px-tb">
-                <div class="price-table-01 theme-bg active">
-                  <div class="price-header">
-                    <div class="price-value white-color"><span>Rp</span>277.500<span class="mo">/Bulan</span></div>
-                  </div>
-                  <div class="price-body">
-                    <ul class="white-color-light">
-                      <li><h3>50 Mbps</h3></li>
-                      <li>Unlimited Kuota</li>
-                    </ul>
-                  </div>
-                  <div class="price-footer">
-                    <a href="#kontakkami" class="btn btn-t-white" rel="noopener noreferrer">Kontak Kami</a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-lg-4 m-15px-tb">
-                <div class="price-table-01 theme-bg active">
-                  <div class="price-header">
-                    <div class="price-value white-color"><span>Rp</span>333.000<span class="mo">/Bulan</span></div>
-                  </div>
-                  <div class="price-body">
-                    <ul class="white-color-light">
-                      <li><h3>100 Mbps</h3></li>
-                      <li>Unlimited Kuota</li>
-                    </ul>
-                  </div>
-                  <div class="price-footer">
-                    <a href="#kontakkami" class="btn btn-t-white" rel="noopener noreferrer">Kontak Kami</a>
-                  </div>
-                </div>
-              </div>
-
+              <h2 class="dark-color font-alt" style="margin-top:30px;">Daftar Paket</h2>
+            </div>
           </div>
+          <div class="row">
+            <div class="col-md-6 col-lg-3 m-15px-tb">
+              <div class="price-table-01 theme-bg active">
+                <div class="price-header">
+                  <div class="price-value white-color"><span>Rp</span>133.000<span class="mo">/Bulan</span></div>
+                </div>
+                <div class="price-body">
+                  <ul class="white-color-light">
+                    <li><h3>15 Mbps</h3></li>
+                    <li>Unlimited Kuota</li>
+                  </ul>
+                </div>
+                <div class="price-footer">
+                  <a href="https://wa.me/6281519449847/?text=Halo%20CS%2C%20saya%20ingin%20mendapatkan%20informasi%20mengenai%20pemasangan%20Wi-Fi%20dengan%20paket%2015%20Mbps" class="btn btn-t-white" target="_blank" rel="noopener noreferrer">Kontak Kami</a>
+                </div>
+              </div>
+            </div>
 
-          
+            <div class="col-md-6 col-lg-3 m-15px-tb">
+              <div class="price-table-01 theme-bg active">
+                <div class="price-header">
+                  <div class="price-value white-color"><span>Rp</span>166.500<span class="mo">/Bulan</span></div>
+                </div>
+                <div class="price-body">
+                  <ul class="white-color-light">
+                    <li><h3>30 Mbps</h3></li>
+                    <li>Unlimited Kuota</li>
+                    <li><h3>BEST SELLER</h3></li>
+                  </ul>
+                </div>
+                <div class="price-footer">
+                  <a href="https://wa.me/6281519449847/?text=Halo%20CS%2C%20saya%20ingin%20mendapatkan%20informasi%20mengenai%20pemasangan%20Wi-Fi%20dengan%20paket%2030%20Mbps" class="btn btn-t-white" target="_blank" rel="noopener noreferrer">Kontak Kami</a>
+                </div>
+              </div>
+            </div>
 
-        </div> 
+            <div class="col-md-6 col-lg-3 m-15px-tb">
+              <div class="price-table-01 theme-bg active">
+                <div class="price-header">
+                  <div class="price-value white-color"><span>Rp</span>277.500<span class="mo">/Bulan</span></div>
+                </div>
+                <div class="price-body">
+                  <ul class="white-color-light">
+                    <li><h3>50 Mbps</h3></li>
+                    <li>Unlimited Kuota</li>
+                  </ul>
+                </div>
+                <div class="price-footer">
+                  <a href="https://wa.me/6281519449847/?text=Halo%20CS%2C%20saya%20ingin%20mendapatkan%20informasi%20mengenai%20pemasangan%20Wi-Fi%20dengan%20paket%2050%20Mbps" class="btn btn-t-white" target="_blank" rel="noopener noreferrer">Kontak Kami</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 m-15px-tb">
+              <div class="price-table-01 theme-bg active">
+                <div class="price-header">
+                  <div class="price-value white-color"><span>Rp</span>333.000<span class="mo">/Bulan</span></div>
+                </div>
+                <div class="price-body">
+                  <ul class="white-color-light">
+                    <li><h3>100 Mbps</h3></li>
+                    <li>Unlimited Kuota</li>
+                  </ul>
+                </div>
+                <div class="price-footer">
+                  <a href="https://wa.me/6281519449847/?text=Halo%20CS%2C%20saya%20ingin%20mendapatkan%20informasi%20mengenai%20pemasangan%20Wi-Fi%20dengan%20paket%20100%20Mbps" class="btn btn-t-white" target="_blank" rel="noopener noreferrer">Kontak Kami</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="shapes-box">
-          <span data-parallax='{"x": 150, "y": -20, "rotateZ":500}'>
-              <img src="static\img\fl-shape-1.png" title="" alt="">
-          </span>
-          <span data-parallax='{"x": 250, "y": 150, "rotateZ":500}'>
-              <img src="static\img\fl-shape-2.png" title="" alt="">
-          </span>
-          <span data-parallax='{"x": -180, "y": 80, "rotateY":2000}'>
-              <img src="static\img\fl-shape-3.png" title="" alt="">
-          </span>
-          <span data-parallax='{"x": -20, "y": 180}'>
-              <img src="static\img\fl-shape-4.png" title="" alt="">
-          </span>
-          <span data-parallax='{"x": 300, "y": 70}'>
-              <img src="static\img\fl-shape-5.png" title="" alt="">
-          </span>
-          <span data-parallax='{"x": 250, "y": 180, "rotateZ":1500}'>
-              <img src="static\img\fl-shape-6.png" title="" alt="">
-          </span>
-          <span data-parallax='{"x": 180, "y": 10, "rotateZ":2000}'>
-              <img src="static\img\fl-shape-7.png" title="" alt="">
-          </span>
-          <span data-parallax='{"x": 60, "y": -100}'>
-              <img src="static\img\fl-shape-9.png" title="" alt="">
-          </span>
-          <span data-parallax='{"x": -30, "y": 150, "rotateZ":1500}'>
-              <img src="static\img\fl-shape-10.png" title="" alt="">
-          </span>
-      </div>
+          <span data-parallax='{"x": 150, "y": -20, "rotateZ":500}'><img src="/static/img/fl-shape-1.png" title="" alt=""></span>
+          <span data-parallax='{"x": 250, "y": 150, "rotateZ":500}'><img src="/static/img/fl-shape-2.png" title="" alt=""></span>
+          <span data-parallax='{"x": -180, "y": 80, "rotateY":2000}'><img src="/static/img/fl-shape-3.png" title="" alt=""></span>
+          <span data-parallax='{"x": -20, "y": 180}'><img src="/static/img/fl-shape-4.png" title="" alt=""></span>
+          <span data-parallax='{"x": 300, "y": 70}'><img src="/static/img/fl-shape-5.png" title="" alt=""></span>
+          <span data-parallax='{"x": 250, "y": 180, "rotateZ":1500}'><img src="/static/img/fl-shape-6.png" title="" alt=""></span>
+          <span data-parallax='{"x": 180, "y": 10, "rotateZ":2000}'><img src="/static/img/fl-shape-7.png" title="" alt=""></span>
+          <span data-parallax='{"x": 60, "y": -100}'><img src="/static/img/fl-shape-9.png" title="" alt=""></span>
+          <span data-parallax='{"x": -30, "y": 150, "rotateZ":1500}'><img src="/static/img/fl-shape-10.png" title="" alt=""></span>
+        </div>
       </section>
 
       <section id="home" class="home-banner-03 theme-bg bg-effect-box">
-        <div class="bg-effect bg-cover" style="background-image: url(static/img/banner-effect-6.svg);"></div>
+        <div class="bg-effect bg-cover" style="background-image: url(/static/img/banner-effect-6.svg);"></div>
         <div id="particles_effect" class="particles-effect"></div>
         <div class="container">
           <div class="row align-items-center justify-content-center p-100px-tb sm-p-60px-b">
-            <div class="col-lg-5 md-p-30px-tb">
+            <div class="col-12 col-lg-5 md-p-30px-tb">
               <h5 class="white-color">PT AMERTA ASA MEDIA</h5>
-              <h1 class="font-alt white-color">Login Free Wifi</h1>
-              
+              <h1 class="font-alt white-color">Daftar Wi-Fi Gratis</h1>
+
               <div class="subscribe-block">
-                  <div class="card-block py-lg px-md">
-                    <form id="loginForm" class="md-form form-light" role="form" action="$(link-login-only)" method="post">
-                        <input type="hidden" name="dst" value="$(link-orig)"/>
-                        <input type="hidden" name="popup" value="true"/>
-                      <div class="row">
-                        <div class="col-md-6">
-                          <div class="form-group">
-                            <div class="md-form-line-wrap">
-                              <input id="inputUser" type="hidden" name="username" placeholder="Username" class="form-control" value="FreeWiFi_AMERTA">
-                            </div>
+                <div class="card-block py-lg px-md">
+
+                  <div class="row m-15px-b" style="margin-left:0; margin-right:0;">
+                    <div class="col-6" style="padding:0;">
+                      <button type="button" id="tabRegisterBtn" class="btn btn-block btn-light" style="border-radius:4px 0 0 4px;">Daftar</button>
+                    </div>
+                    <div class="col-6" style="padding:0;">
+                      <button type="button" id="tabLoginBtn" class="btn btn-block" style="border-radius:0 4px 4px 0; background:transparent; border:1px solid #fff; color:#fff;">Login</button>
+                    </div>
+                  </div>
+
+                  <form id="registerForm" class="md-form form-light" role="form">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="nama" class="form-label">Nama Lengkap</label>
+                          <div class="md-form-line-wrap">
+                            <input id="nama" type="text" placeholder="Nama Lengkap" class="form-control" required>
                           </div>
-                        </div>
-                        <div class="col-md-6">
-                          <div class="form-group">
-                            <label for="inputPassword" class="form-label">Password</label>
-                            <div class="md-form-line-wrap">
-                              <input id="inputPassword" type="password" name="password" placeholder="Password" class="form-control" required>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-md-12">
-                          <div class="form-group">
-                            $(if error)
-                              <p><font style="color: #ffffffe8">Maaf Password Yang Anda Masukkan Salah</font></p>
-                            $(endif)
-                          </div>
-                        </div></br>
-                        <div class="col-md-12">
-                            <button type="submit" class="btn btn-block btn-light"><span class="btn-elem-wrap"><span class="text" style="color: darkblue">LOGIN</span></span></button>
                         </div>
                       </div>
-                    </form>
-                  </div>
-                
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="hp" class="form-label">Nomor HP</label>
+                          <div class="md-form-line-wrap">
+                            <input id="hp" type="text" inputmode="numeric" placeholder="Nomor HP" class="form-control" required>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <div id="formMsg" style="min-height:20px;">
+                            <font id="formMsgText" style="color:#ffffffe8"></font>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <button type="submit" id="submitBtn" class="btn btn-block btn-light">
+                          <span class="btn-elem-wrap"><span class="text" style="color: darkblue">DAFTAR</span></span>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+
+                  <form id="loginForm" class="md-form form-light" role="form" style="display:none;">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="loginUsername" class="form-label">Username</label>
+                          <div class="md-form-line-wrap">
+                            <input id="loginUsername" type="text" placeholder="Username" class="form-control" required>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="loginPassword" class="form-label">Password</label>
+                          <div class="md-form-line-wrap">
+                            <input id="loginPassword" type="text" placeholder="Password" class="form-control" required>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <div id="loginMsg" style="min-height:20px;">
+                            <font id="loginMsgText" style="color:#ffffffe8"></font>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <button type="submit" id="loginBtn" class="btn btn-block btn-light">
+                          <span class="btn-elem-wrap"><span class="text" style="color: darkblue">MASUK</span></span>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+
+                </div>
               </div>
-            </div> 
-            <div class="col-lg-7 text-center p-50px-l">
-              <img src="static\img\home-banner-7.svg" title="" alt="">
             </div>
-          </div> 
+            <div class="col-12 col-lg-7 text-center p-50px-l">
+              <img id="home-img" src="/static/img/home-banner-7.svg" title="" alt="">
+            </div>
+          </div>
         </div>
       </section>
 
-
-
-
-
-
       <section id="contact" class="section">
         <div class="container">
-          <div class="row m-45px-b sm-m-25px-b">
-            <div class="col-lg-5 col-md-10">
-             
+          <div class="section-title-01 text-center">
+            <h2 class="dark-color font-alt">Kontak</h2>
+          </div>
+          <div class="row justify-content-center align-items-stretch" style="row-gap:20px;">
+            <div class="col-md-6 col-lg-4">
+              <div class="contact-info" style="height:100%; box-sizing:border-box; display:flex; flex-direction:row; align-items:center; text-align:left;">
+                <img src="/static/img/icon-pin.svg" width="32" height="32" alt="" style="flex-shrink:0; margin-left:-10px;">
+                <div style="margin-left:10px;">
+                  <h6 class="dark-color font-alt" style="margin-bottom:6px;">Alamat</h6>
+                  <p style="margin:0;">Perum. Griya Jambean Asri, Jl. Diponegoro No. 123, RT.02 RW.04, Dusun Ngerombeh, Desa Jambean, Kecamatan Kras, Kabupaten Kediri</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+              <div class="contact-info" id="kontakkami" style="height:100%; box-sizing:border-box; display:flex; flex-direction:row; align-items:center; text-align:left;">
+                <img src="/static/img/icon-phone.svg" width="32" height="32" alt="" style="flex-shrink:0; margin-left:-10px;">
+                <div style="margin-left:10px;">
+                  <h6 class="dark-color font-alt" style="margin-bottom:6px;">Customer Service</h6>
+                  <p style="margin:0;">+62 811-3500-836</p>
+                </div>
+              </div>
             </div>
           </div>
-          
-<div class="section-title-01">
-                <h2 class="dark-color font-alt">Kontak</h2>
-              </div>
-          <div class="row justify-content-center">
-            <div class="col-lg-8 md-m-10px-b">
-
-            </div> 
-            <div class="col-lg-4">
-              <div class="contact-info">
-                  <i class="theme-color ti-location-pin"></i>
-                  <h6 class="dark-color font-alt"> Alamat</h6>
-                  <p>Perum. Griya Jambean Asri, Jl. Diponegoro No. 123, RT.02 RW.04, Dusun Ngerombeh, Desa Jambean, Kecamatan Kras, Kabupaten Kediri</p>
-              </div>
-              
-              <div class="contact-info" id="kontakkami">
-              
-                <i class="theme-color ti-mobile"></i>
-                <h6 class="dark-color font-alt">Customer Service</h6>
-                <p>+62 811-3500-836</p>
-              
-</div>
-            </div>
-          </div>
-
-          
-        </div> 
+        </div>
       </section>
-
     </main>
+
     <footer class="footer footer-dark">
       <div class="footer-copy">
         <div class="row">
           <div class="col-12">
-            <p>All © PT AMERTA ASA MEDIA - All Rights Reserved.</p>
+            <p>&copy; 2026 PT. Amerta Asa Media (Spiderwave) - Network Operations Center</p>
           </div>
-        </div> 
+        </div>
       </div>
     </footer>
-    
-    <script src="static\js\jquery-3.2.1.min.js"></script>
-    <script src="static\js\jquery-migrate-3.0.0.min.js"></script>
-    <script src="static\plugin\appear\jquery.appear.js"></script>
-    <script src="static\plugin\bootstrap\js\popper.min.js"></script>
-    <script src="static\plugin\bootstrap\js\bootstrap.js"></script>
-    <script src="static\plugin\particles\particles.min.js"></script>
-    <script src="static\plugin\particles\particles-app.js"></script>
-    <script src="static\js\jquery.parallax-scroll.js"></script>
-    <script src="static\js\custom.js"></script>
 
-    $(if chap-id)
-    <script type="text/javascript" src="md5.js"></script>
-    <script type="text/javascript">
-        $('#loginForm').submit(function () {
-            var password = $('#inputPassword');
-            password.val(hexMD5('$(chap-id)' + password.val() + '$(chap-challenge)'));
-        });
-    </script>
-    $(endif)
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/js/jquery-migrate-3.0.0.min.js"></script>
+    <script src="/static/plugin/appear/jquery.appear.js"></script>
+    <script src="/static/plugin/bootstrap/js/popper.min.js"></script>
+    <script src="/static/plugin/bootstrap/js/bootstrap.js"></script>
+    <script src="/static/plugin/particles/particles.min.js"></script>
+    <script src="/static/plugin/particles/particles-app.js"></script>
+    <script src="/static/js/jquery.parallax-scroll.js"></script>
+    <script src="/static/js/custom.js"></script>
+    <script src="/static/md5.js"></script>
+
     <script>
-      $("#menu-toggle").click(function (e) {
-          e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
+      const params = new URLSearchParams(window.location.search);
+      const routerAsal = params.get('router') || 'unknown';
+
+      // Variabel bawaan MikroTik — hanya terisi kalau redirect dari alogin.html
+      // menyertakannya di URL. Kalau kosong (misal test langsung di browser),
+      // auto-login dilewati dan kredensial cukup ditampilkan di layar.
+      const chapId = params.get('chap-id') || '';
+      const chapChallenge = params.get('chap-challenge') || '';
+      const linkLoginOnly = params.get('link-login-only') || '';
+      const linkOrig = params.get('link-orig') || '';
+
+      const form = document.getElementById('registerForm');
+      const msgText = document.getElementById('formMsgText');
+      const btn = document.getElementById('submitBtn');
+
+      const tabRegisterBtn = document.getElementById('tabRegisterBtn');
+      const tabLoginBtn = document.getElementById('tabLoginBtn');
+      const loginForm = document.getElementById('loginForm');
+      const loginMsgText = document.getElementById('loginMsgText');
+      const loginBtn = document.getElementById('loginBtn');
+
+      function showRegisterTab() {
+        form.style.display = '';
+        loginForm.style.display = 'none';
+        tabRegisterBtn.className = 'btn btn-block btn-light';
+        tabRegisterBtn.style = 'border-radius:4px 0 0 4px;';
+        tabLoginBtn.className = 'btn btn-block';
+        tabLoginBtn.style = 'border-radius:0 4px 4px 0; background:transparent; border:1px solid #fff; color:#fff;';
+      }
+
+      function showLoginTab() {
+        form.style.display = 'none';
+        loginForm.style.display = '';
+        tabLoginBtn.className = 'btn btn-block btn-light';
+        tabLoginBtn.style = 'border-radius:0 4px 4px 0;';
+        tabRegisterBtn.className = 'btn btn-block';
+        tabRegisterBtn.style = 'border-radius:4px 0 0 4px; background:transparent; border:1px solid #fff; color:#fff;';
+      }
+
+      tabRegisterBtn.addEventListener('click', showRegisterTab);
+      tabLoginBtn.addEventListener('click', showLoginTab);
+
+      let pollTimer = null;
+
+      function setMsg(text, ok) {
+        msgText.style.color = ok ? '#baffc9' : '#ffb3b3';
+        msgText.textContent = text;
+      }
+
+      function doHotspotLogin(username, password, targetMsgEl) {
+        const showMsg = (text, ok) => {
+          const el = targetMsgEl || msgText;
+          el.style.color = ok ? '#baffc9' : '#ffb3b3';
+          el.textContent = text;
+        };
+
+        if (!linkLoginOnly) {
+          // Tidak ada variabel MikroTik (bukan diakses lewat redirect hotspot asli)
+          showMsg('Terdaftar! Username: ' + username + ' — Password: ' + password, true);
+          return;
+        }
+
+        const loginFormEl = document.createElement('form');
+        loginFormEl.method = 'POST';
+        loginFormEl.action = linkLoginOnly;
+        loginFormEl.style.display = 'none';
+
+        const uInput = document.createElement('input');
+        uInput.name = 'username';
+        uInput.value = username;
+        loginFormEl.appendChild(uInput);
+
+        const pInput = document.createElement('input');
+        pInput.name = 'password';
+        if (chapId && chapChallenge && typeof hexMD5 === 'function') {
+          pInput.value = hexMD5(chapId + password + chapChallenge);
+        } else {
+          pInput.value = password;
+        }
+        loginFormEl.appendChild(pInput);
+
+        if (linkOrig) {
+          const dstInput = document.createElement('input');
+          dstInput.name = 'dst';
+          dstInput.value = linkOrig;
+          loginFormEl.appendChild(dstInput);
+        }
+
+        const popupInput = document.createElement('input');
+        popupInput.name = 'popup';
+        popupInput.value = 'true';
+        loginFormEl.appendChild(popupInput);
+
+        document.body.appendChild(loginFormEl);
+        showMsg('Menghubungkan ke internet...', true);
+        loginFormEl.submit();
+      }
+
+      function pollStatus(pendingId) {
+        pollTimer = setInterval(async () => {
+          try {
+            const res = await fetch('/status/' + pendingId);
+            const data = await res.json();
+            if (!data.ok) return;
+
+            if (data.status === 'confirmed' && data.username) {
+              clearInterval(pollTimer);
+              doHotspotLogin(data.username, data.password);
+            } else if (data.status === 'rejected') {
+              clearInterval(pollTimer);
+              setMsg('Pendaftaran dibatalkan. Silakan isi ulang jika perlu.', false);
+              btn.disabled = false;
+            } else if (data.status === 'expired') {
+              clearInterval(pollTimer);
+              setMsg('Waktu konfirmasi habis. Silakan daftar ulang.', false);
+              btn.disabled = false;
+            }
+            // status 'pending'/'confirmed_processing' -> lanjut nunggu, tidak perlu apa-apa
+          } catch (err) {
+            // koneksi sempat gagal, biarkan polling lanjut ke percobaan berikutnya
+          }
+        }, 3000);
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        btn.disabled = true;
+        msgText.textContent = '';
+
+        const payload = {
+          nama_lengkap: document.getElementById('nama').value,
+          no_telp: document.getElementById('hp').value,
+          router_asal: routerAsal,
+        };
+
+        try {
+          const res = await fetch('/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+
+          if (!data.ok) {
+            setMsg(data.message, false);
+            btn.disabled = false;
+            return;
+          }
+
+          setMsg('Cek WhatsApp/Telegram kamu dan tap "Ya, benar" — halaman ini akan otomatis terhubung.', true);
+          pollStatus(data.pendingId);
+        } catch (err) {
+          setMsg('Gagal menghubungi server, coba lagi.', false);
+          btn.disabled = false;
+        }
+      });
+
+      loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        loginBtn.disabled = true;
+        loginMsgText.textContent = '';
+
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+
+        if (!username || !password) {
+          loginMsgText.style.color = '#ffb3b3';
+          loginMsgText.textContent = 'Username dan password wajib diisi.';
+          loginBtn.disabled = false;
+          return;
+        }
+
+        // Langsung submit ke hotspot — MikroTik/RADIUS yang validasi.
+        // Kalau salah, user akan diarahkan MikroTik ke halaman gagal login (rlogin.html).
+        doHotspotLogin(username, password, loginMsgText);
       });
     </script>
-    <script type="text/javascript">
-    <!--
-      document.login.username.focus();
-    //-->
-    </script>
-
-  <script>
-    window.addEventListener('load', function () {
-      const section = document.getElementById('price');
-      if (section) {
-        section.focus(); // Fokus keyboard
-        section.scrollIntoView({ behavior: 'smooth' }); // Scroll ke section (opsional)
-        const yOffset = -100;
-        const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
-    window.scrollTo({ top: y, behavior: 'smooth' });
-      }
-    });
-  </script>
   </body>
 </html>
