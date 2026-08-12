@@ -19,12 +19,10 @@
       /* Perbaikan responsif tambahan */
       .price-table-01 { min-height: 460px; } /* sesuaikan angkanya */
 
-      /* Netralkan animasi hover bawaan yang mengubah layout */
       .price-table-01:hover {
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-        top: 0 !important;
-        position: relative;
+        margin-top: 0 !important;       /* batalkan efek yang menggeser layout */
+        transform: translateY(-10px);   /* animasi "naik" versi aman, murni visual */
+        transition: transform 0.3s ease;
       }
       
       .price-table-01 { height: 100%; display: flex; flex-direction: column; }
