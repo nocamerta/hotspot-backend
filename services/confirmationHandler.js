@@ -3,8 +3,6 @@ const { sendCredential, sendPlainMessage } = require('./telegram');
 const { createHotspotUser } = require('./radius');
 const { generatePassword, sanitizeUsername } = require('./credential');
 
-const CREDENTIAL_EXPIRY_HOURS = parseInt(process.env.CREDENTIAL_EXPIRY_HOURS || '24', 10);
-
 /**
  * Proses satu callback_query dari tombol Ya/Tidak di Telegram.
  * Dipakai baik oleh webhook (POST /webhook/telegram) maupun polling manual.
@@ -36,18 +34,30 @@ async function handleCallbackQuery(callback) {
     }
 
     if (action === 'confirm') {
-      const baseUsername = sanitizeUsername(pending.nama_lengkap);
-      let username = baseUsername;
-      let suffix = 1;
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        const [existing] = await conn.query(
-          `SELECT id FROM active_users WHERE username = ? AND status = 'active'`,
-          [username]
-        );
-        if (existing.length === 0) break;
-        suffix += 1;
-        username = `${baseUsername}${suffix}`;
+      // Cek apakah nomor ini sudah pernah daftar sebelumnya (aktif maupun sudah expired).
+      // Kalau pernah, pakai username yang SAMA (identitas tetap), cuma password yang diperbarui.
+      const [prevRows] = await conn.query(
+        `SELECT username FROM active_users WHERE no_telp = ? ORDER BY id DESC LIMIT 1`,
+        [pending.no_telp]
+      );
+
+      let username;
+      if (prevRows.length > 0) {
+        username = prevRows[0].username;
+      } else {
+        const baseUsername = sanitizeUsername(pending.nama_lengkap);
+        username = baseUsername;
+        let suffix = 1;
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const [existing] = await conn.query(
+            `SELECT id FROM active_users WHERE username = ? AND status = 'active'`,
+            [username]
+          );
+          if (existing.length === 0) break;
+          suffix += 1;
+          username = `${baseUsername}${suffix}`;
+        }
       }
 
       const password = generatePassword(8);
@@ -57,7 +67,6 @@ async function handleCallbackQuery(callback) {
         password,
         noTelp: pending.no_telp,
         routerAsal: pending.router_asal,
-        expiryHours: CREDENTIAL_EXPIRY_HOURS,
       });
 
       await conn.query(
