@@ -1,71 +1,78 @@
-const cron = require('node-cron');
 const pool = require('../config/db');
 
-const PENDING_EXPIRY_MINUTES = parseInt(process.env.PENDING_EXPIRY_MINUTES || '15', 10);
-const INACTIVITY_EXPIRY_DAYS = parseInt(process.env.INACTIVITY_EXPIRY_DAYS || '7', 10);
-const MAX_ACCOUNT_AGE_DAYS = parseInt(process.env.MAX_ACCOUNT_AGE_DAYS || '30', 10);
-
 /**
- * Expire akun kalau salah satu dari 2 kondisi terpenuhi:
- *  1. Tidak ada aktivitas login (radacct) selama INACTIVITY_EXPIRY_DAYS hari
- *     (dihitung dari created_at kalau belum pernah login sama sekali)
- *  2. Sudah lebih dari MAX_ACCOUNT_AGE_DAYS hari sejak tanggal daftar,
- *     berapapun aktifnya user itu (hard cap)
+ * Buat/perbarui user hotspot: insert ke radcheck (dipakai FreeRADIUS) sekaligus
+ * active_users (buat tracking & cron expiry kita sendiri), dalam satu transaksi.
+ *
+ * Aturan expiry (dicek oleh cron jobs/expiry.js, bukan di sini):
+ *  - Tidak login/dipakai selama 7 hari berturut-turut -> expired
+ *  - ATAU sudah 30 hari sejak tanggal daftar (created_at) -> expired
+ *  Mana yang lebih dulu tercapai.
+ *
+ * Kalau nomor telp yang sama sudah pernah daftar (username lama masih ada),
+ * username DIPERTAHANKAN sama, hanya password yang baru — radcheck lama untuk
+ * username itu dihapus dulu supaya tidak ada Cleartext-Password dobel/usang.
  */
-async function cleanupExpiredActiveUsers() {
+async function createHotspotUser({ username, password, noTelp, routerAsal, expiryHours }) {
   const conn = await pool.getConnection();
   try {
-    const [expired] = await conn.query(
-      `SELECT au.id, au.username,
-              COALESCE(MAX(ra.acctstarttime), au.created_at) AS last_used
-       FROM active_users au
-       LEFT JOIN radacct ra ON ra.username = au.username
-       WHERE au.status = 'active'
-       GROUP BY au.id
-       HAVING last_used <= DATE_SUB(NOW(), INTERVAL ? DAY)
-           OR au.created_at <= DATE_SUB(NOW(), INTERVAL ? DAY)`,
-      [INACTIVITY_EXPIRY_DAYS, MAX_ACCOUNT_AGE_DAYS]
+    await conn.beginTransaction();
+
+    // Bersihkan radcheck lama untuk username ini (kalau ada, dari registrasi sebelumnya)
+    await conn.query(`DELETE FROM radcheck WHERE username = ?`, [username]);
+
+    // Single-session per user (RFC: Simultaneous-Use)
+    await conn.query(
+      `INSERT INTO radcheck (username, attribute, op, value) VALUES (?, 'Simultaneous-Use', ':=', '1')`,
+      [username]
     );
 
-    for (const row of expired) {
-      await conn.query(`DELETE FROM radcheck WHERE username = ?`, [row.username]);
-      await conn.query(`UPDATE active_users SET status = 'expired' WHERE id = ?`, [row.id]);
-      console.log(`[expiry] user expired & dihapus dari radcheck: ${row.username}`);
+    await conn.query(
+      `INSERT INTO radcheck (username, attribute, op, value) VALUES (?, 'Cleartext-Password', ':=', ?)`,
+      [username, password]
+    );
+
+    // Kalau username ini sudah pernah ada di active_users (aktif maupun expired),
+    // UPDATE baris itu (reset masa berlaku + password baru) alih-alih insert baris
+    // baru — supaya aman meski kolom username punya UNIQUE constraint.
+    const [existingRows] = await conn.query(
+      `SELECT id FROM active_users WHERE username = ? ORDER BY id DESC LIMIT 1`,
+      [username]
+    );
+
+    let activeUserId;
+    if (existingRows.length > 0) {
+      activeUserId = existingRows[0].id;
+      await conn.query(
+        `UPDATE active_users
+         SET password = ?, no_telp = ?, router_asal = ?, created_at = NOW(),
+             expired_at = DATE_ADD(NOW(), INTERVAL 30 DAY), status = 'active'
+         WHERE id = ?`,
+        [password, noTelp, routerAsal, activeUserId]
+      );
+    } else {
+      const [result] = await conn.query(
+        `INSERT INTO active_users (username, password, no_telp, router_asal, expired_at)
+         VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 30 DAY))`,
+        [username, password, noTelp, routerAsal]
+      );
+      activeUserId = result.insertId;
     }
+
+    await conn.commit();
+
+    const [rows] = await conn.query(
+      `SELECT expired_at FROM active_users WHERE id = ?`,
+      [activeUserId]
+    );
+
+    return rows[0].expired_at;
   } catch (err) {
-    console.error('[expiry] error cleanup active_users:', err.message);
+    await conn.rollback();
+    throw err;
   } finally {
     conn.release();
   }
 }
 
-async function cleanupStalePendingUsers() {
-  const conn = await pool.getConnection();
-  try {
-    const [result] = await conn.query(
-      `UPDATE pending_users
-       SET status = 'expired'
-       WHERE status = 'pending'
-         AND created_at <= DATE_SUB(NOW(), INTERVAL ? MINUTE)`,
-      [PENDING_EXPIRY_MINUTES]
-    );
-    if (result.affectedRows > 0) {
-      console.log(`[expiry] ${result.affectedRows} pending_users basi ditandai expired`);
-    }
-  } catch (err) {
-    console.error('[expiry] error cleanup pending_users:', err.message);
-  } finally {
-    conn.release();
-  }
-}
-
-function startExpiryJobs() {
-  // Jalan tiap 5 menit
-  cron.schedule('*/5 * * * *', () => {
-    cleanupExpiredActiveUsers();
-    cleanupStalePendingUsers();
-  });
-  console.log(`[expiry] cron job aktif (tiap 5 menit) — inaktif ${INACTIVITY_EXPIRY_DAYS} hari atau umur akun ${MAX_ACCOUNT_AGE_DAYS} hari`);
-}
-
-module.exports = { startExpiryJobs };
+module.exports = { createHotspotUser };
