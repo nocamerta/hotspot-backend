@@ -32,27 +32,38 @@ async function createHotspotUser({ username, password, noTelp, routerAsal, expir
       [username, password]
     );
 
-    // Tandai record aktif lama (kalau ada) untuk nomor ini sebagai expired,
-    // supaya cuma ada 1 baris 'active' per nomor telp.
-    await conn.query(
-      `UPDATE active_users SET status = 'expired' WHERE no_telp = ? AND status = 'active'`,
-      [noTelp]
+    // Kalau username ini sudah pernah ada di active_users (aktif maupun expired),
+    // UPDATE baris itu (reset masa berlaku + password baru) alih-alih insert baris
+    // baru — supaya aman meski kolom username punya UNIQUE constraint.
+    const [existingRows] = await conn.query(
+      `SELECT id FROM active_users WHERE username = ? ORDER BY id DESC LIMIT 1`,
+      [username]
     );
 
-    // expired_at di sini adalah HARD CAP 30 hari dari tanggal daftar.
-    // Expiry karena tidak dipakai 7 hari dicek terpisah oleh cron (lihat jobs/expiry.js),
-    // karena butuh data radacct yang baru ada setelah user benar-benar login.
-    const [result] = await conn.query(
-      `INSERT INTO active_users (username, password, no_telp, router_asal, expired_at)
-       VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 30 DAY))`,
-      [username, password, noTelp, routerAsal]
-    );
+    let activeUserId;
+    if (existingRows.length > 0) {
+      activeUserId = existingRows[0].id;
+      await conn.query(
+        `UPDATE active_users
+         SET password = ?, no_telp = ?, router_asal = ?, created_at = NOW(),
+             expired_at = DATE_ADD(NOW(), INTERVAL 30 DAY), status = 'active'
+         WHERE id = ?`,
+        [password, noTelp, routerAsal, activeUserId]
+      );
+    } else {
+      const [result] = await conn.query(
+        `INSERT INTO active_users (username, password, no_telp, router_asal, expired_at)
+         VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 30 DAY))`,
+        [username, password, noTelp, routerAsal]
+      );
+      activeUserId = result.insertId;
+    }
 
     await conn.commit();
 
     const [rows] = await conn.query(
       `SELECT expired_at FROM active_users WHERE id = ?`,
-      [result.insertId]
+      [activeUserId]
     );
 
     return rows[0].expired_at;
