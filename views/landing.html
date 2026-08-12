@@ -18,6 +18,15 @@
     <style>
       /* Perbaikan responsif tambahan */
       .price-table-01 { min-height: 460px; } /* sesuaikan angkanya */
+
+      /* Netralkan animasi hover bawaan yang mengubah layout */
+      .price-table-01:hover {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        top: 0 !important;
+        position: relative;
+      }
+      
       .price-table-01 { height: 100%; display: flex; flex-direction: column; }
       .price-body { flex: 1; }
       #home .container { padding-left: 30px; padding-right: 30px; }
