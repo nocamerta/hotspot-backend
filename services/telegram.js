@@ -35,11 +35,17 @@ async function sendConfirmation(chatId, namaLengkap, noTelp, pendingId) {
  * Kirim kredensial hotspot setelah dikonfirmasi.
  */
 async function sendCredential(chatId, username, password, expiredAt) {
+  const expiredDateStr = new Date(expiredAt).toLocaleDateString('id-ID', {
+    day: 'numeric', month: 'long', year: 'numeric',
+  });
+
   const text =
     `Pendaftaran berhasil! 🎉\n\n` +
     `Username: ${username}\n` +
     `Password: ${password}\n\n` +
-    `Berlaku sampai: ${expiredAt}\n` +
+    `Catatan masa berlaku:\n` +
+    `- Akun otomatis nonaktif kalau tidak dipakai login selama 7 hari berturut-turut\n` +
+    `- Maksimal berlaku sampai ${expiredDateStr} (30 hari sejak pendaftaran), meskipun rutin dipakai\n\n` +
     `Silakan login di halaman Wi-Fi menggunakan data di atas.`;
 
   await axios.post(`${API_BASE}/sendMessage`, {
