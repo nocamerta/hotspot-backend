@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const pool = require('../config/db');
 const qontak = require('../services/qontak');
+const { normalizePhoneNumber } = require('../services/credential');
 
 const router = express.Router();
 const RATE_LIMIT_PER_DAY = parseInt(process.env.RATE_LIMIT_PER_DAY || '3', 10);
@@ -19,9 +20,9 @@ router.post('/register', async (req, res) => {
     return res.status(400).json({ ok: false, message: 'Data tidak lengkap.' });
   }
 
-  const noTelpClean = no_telp.replace(/[^0-9]/g, '');
-  if (noTelpClean.length < 9 || noTelpClean.length > 15) {
-    return res.status(400).json({ ok: false, message: 'Nomor telepon tidak valid.' });
+  const noTelpClean = normalizePhoneNumber(no_telp);
+  if (!noTelpClean) {
+    return res.status(400).json({ ok: false, message: 'Nomor HP tidak valid. Contoh format: 08123456789.' });
   }
 
   let conn;
