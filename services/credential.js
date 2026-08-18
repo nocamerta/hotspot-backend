@@ -12,16 +12,27 @@ function generatePassword(length = 8) {
 
 /**
  * Bersihkan nama lengkap jadi username yang aman untuk RADIUS/MikroTik.
- * Contoh: "Budi Santoso" -> "budi.santoso"
- * Kalau username sudah dipakai (masih aktif), tambahkan suffix angka.
+ * Kalau nama terdiri lebih dari 2 kata, cuma 2 kata PERTAMA yang dipakai.
+ * Contoh: "Budi Santoso Wijaya" -> "budi.santoso"
+ *         "Budi Santoso" -> "budi.santoso"
+ *         "Budi" -> "budi"
  */
 function sanitizeUsername(namaLengkap) {
-  return namaLengkap
-    .trim()
+  const firstTwoWords = namaLengkap.trim().split(/\s+/).slice(0, 2).join(' ');
+
+  return firstTwoWords
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, '')
     .replace(/\s+/g, '.')
     .slice(0, 40);
+}
+
+/**
+ * Generate username untuk trial (tidak berbasis nama, karena trial tidak
+ * kumpulkan data nama). Contoh: "trial-x7k2m9pq"
+ */
+function generateTrialUsername() {
+  return 'trial-' + generatePassword(8).toLowerCase();
 }
 
 /**
@@ -52,4 +63,4 @@ function normalizePhoneNumber(input) {
   return normalized;
 }
 
-module.exports = { generatePassword, sanitizeUsername, normalizePhoneNumber };
+module.exports = { generatePassword, sanitizeUsername, normalizePhoneNumber, generateTrialUsername };
