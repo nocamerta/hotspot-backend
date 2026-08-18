@@ -7,7 +7,6 @@ const { createTrialUser } = require('../services/radius');
 
 const router = express.Router();
 const RATE_LIMIT_PER_DAY = parseInt(process.env.RATE_LIMIT_PER_DAY || '3', 10);
-const TRIAL_LIMIT_PER_DAY = parseInt(process.env.TRIAL_LIMIT_PER_DAY || '1', 10);
 
 // GET /landing?mac=...&router=r1_krs
 router.get('/landing', (req, res) => {
@@ -115,35 +114,20 @@ router.get('/status/:id', async (req, res) => {
 });
 
 // POST /trial  { mac, router_asal }
-// Wi-Fi gratis 10 menit, tanpa daftar/konfirmasi WA — langsung dapat kredensial.
-// Dibatasi 1x/hari per MAC address supaya tidak disalahgunakan berulang-ulang.
+// Wi-Fi gratis 10 menit, tanpa daftar/konfirmasi WA, tanpa pembatasan apapun —
+// siapapun boleh klik kapan saja. Registrasi reguler (/register) yang tetap
+// dibatasi per nomor telp seperti sebelumnya, ini murni tambahan terpisah.
 router.post('/trial', async (req, res) => {
   const { mac, router_asal } = req.body;
-
-  if (!mac) {
-    return res.status(400).json({ ok: false, message: 'Perangkat tidak terdeteksi, coba muat ulang halaman.' });
-  }
 
   let conn;
   try {
     conn = await pool.getConnection();
 
-    const [rows] = await conn.query(
-      `SELECT COUNT(*) AS total FROM active_users
-       WHERE no_telp = ? AND username LIKE 'trial-%' AND created_at >= CURDATE()`,
-      [mac]
-    );
-    if (rows[0].total >= TRIAL_LIMIT_PER_DAY) {
-      return res.status(429).json({
-        ok: false,
-        message: 'Kamu sudah pernah pakai trial gratis hari ini. Coba lagi besok, atau daftar reguler.',
-      });
-    }
-
     const username = generateTrialUsername();
     const password = generatePassword(8);
 
-    await createTrialUser({ username, password, mac, routerAsal: router_asal || 'unknown' });
+    await createTrialUser({ username, password, mac: mac || 'unknown', routerAsal: router_asal || 'unknown' });
 
     res.json({ ok: true, username, password });
   } catch (err) {
