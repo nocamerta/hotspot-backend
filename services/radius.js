@@ -1,19 +1,11 @@
 const pool = require('../config/db');
 
 /**
- * Buat/perbarui user hotspot: insert ke radcheck (dipakai FreeRADIUS) sekaligus
- * active_users (buat tracking & cron expiry kita sendiri), dalam satu transaksi.
- *
- * Aturan expiry (dicek oleh cron jobs/expiry.js, bukan di sini):
- *  - Tidak login/dipakai selama 7 hari berturut-turut -> expired
- *  - ATAU sudah 30 hari sejak tanggal daftar (created_at) -> expired
- *  Mana yang lebih dulu tercapai.
- *
- * Kalau nomor telp yang sama sudah pernah daftar (username lama masih ada),
- * username DIPERTAHANKAN sama, hanya password yang baru — radcheck lama untuk
- * username itu dihapus dulu supaya tidak ada Cleartext-Password dobel/usang.
+ * Insert/replace ke radcheck + upsert ke active_users. Dipakai bareng oleh
+ * user reguler (30 hari) maupun trial (10 menit) — beda cuma di ekspresi
+ * SQL buat expired_at.
  */
-async function createHotspotUser({ username, password, noTelp, routerAsal, expiryHours }) {
+async function upsertHotspotUser({ username, password, noTelp, routerAsal, expiredAtSql }) {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
@@ -46,14 +38,14 @@ async function createHotspotUser({ username, password, noTelp, routerAsal, expir
       await conn.query(
         `UPDATE active_users
          SET password = ?, no_telp = ?, router_asal = ?, created_at = NOW(),
-             expired_at = DATE_ADD(NOW(), INTERVAL 30 DAY), status = 'active'
+             expired_at = ${expiredAtSql}, status = 'active'
          WHERE id = ?`,
         [password, noTelp, routerAsal, activeUserId]
       );
     } else {
       const [result] = await conn.query(
         `INSERT INTO active_users (username, password, no_telp, router_asal, expired_at)
-         VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 30 DAY))`,
+         VALUES (?, ?, ?, ?, ${expiredAtSql})`,
         [username, password, noTelp, routerAsal]
       );
       activeUserId = result.insertId;
@@ -75,4 +67,32 @@ async function createHotspotUser({ username, password, noTelp, routerAsal, expir
   }
 }
 
-module.exports = { createHotspotUser };
+/**
+ * User reguler: masa berlaku hard cap 30 hari sejak tanggal daftar.
+ * Expiry karena tidak dipakai 7 hari dicek terpisah oleh cron (lihat jobs/expiry.js).
+ */
+async function createHotspotUser({ username, password, noTelp, routerAsal }) {
+  return upsertHotspotUser({
+    username,
+    password,
+    noTelp,
+    routerAsal,
+    expiredAtSql: 'DATE_ADD(NOW(), INTERVAL 30 DAY)',
+  });
+}
+
+/**
+ * User trial: masa berlaku cuma 10 menit sejak dibuat.
+ * noTelp diisi MAC address perangkat (karena trial tidak minta nomor HP).
+ */
+async function createTrialUser({ username, password, mac, routerAsal }) {
+  return upsertHotspotUser({
+    username,
+    password,
+    noTelp: mac,
+    routerAsal,
+    expiredAtSql: 'DATE_ADD(NOW(), INTERVAL 10 MINUTE)',
+  });
+}
+
+module.exports = { createHotspotUser, createTrialUser };
