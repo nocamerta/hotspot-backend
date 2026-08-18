@@ -17,14 +17,6 @@
     <link href="/static/css/color/default.css" rel="stylesheet" id="color_theme">
     <style>
       /* Perbaikan responsif tambahan */
-      .price-table-01 { min-height: 460px; } /* sesuaikan angkanya */
-
-      .price-table-01:hover {
-        margin-top: 0 !important;       /* batalkan efek yang menggeser layout */
-        transform: translateY(-10px);   /* animasi "naik" versi aman, murni visual */
-        transition: transform 0.3s ease;
-      }
-      
       .price-table-01 { height: 100%; display: flex; flex-direction: column; }
       .price-body { flex: 1; }
       #home .container { padding-left: 30px; padding-right: 30px; }
@@ -38,7 +30,7 @@
         #price .price-value { font-size: 28px; line-height: 1.3; }
       }
       #home .col-lg-5 { text-align: center; }
-      #home .subscribe-block, #home .card-block { max-width: auto; margin-left: auto; margin-right: auto; }
+      #home .subscribe-block, #home .card-block { max-width: 420px; margin-left: auto; margin-right: auto; }
       @media (max-width: 991px) {
         #home-img { max-width: 320px; margin-top: 30px; }
       }
@@ -47,7 +39,6 @@
         #home h1 { font-size: 1.8rem; }
         #price .container { padding-left: 20px; padding-right: 20px; }
         #price h4 { font-size: 0.95rem !important; }
-        #price { margin-top: 40px; }
       }
       img { max-width: 100%; height: auto; }
     </style>
@@ -90,12 +81,12 @@
                 </div>
                 <div class="price-body">
                   <ul class="white-color-light">
-                    <li><h3>20 Mbps</h3></li>
+                    <li><h3>15 Mbps</h3></li>
                     <li>Unlimited Kuota</li>
                   </ul>
                 </div>
                 <div class="price-footer">
-                  <a href="https://wa.me/6281519449847/?text=Halo%20CS%2C%20saya%20ingin%20mendapatkan%20informasi%20mengenai%20pemasangan%20Wi-Fi%20dengan%20paket%2020%20Mbps" class="btn btn-t-white" target="_blank" rel="noopener noreferrer">Kontak Kami</a>
+                  <a href="https://wa.me/6281519449847/?text=Halo%20CS%2C%20saya%20ingin%20mendapatkan%20informasi%20mengenai%20pemasangan%20Wi-Fi%20dengan%20paket%2015%20Mbps" class="btn btn-t-white" target="_blank" rel="noopener noreferrer">Kontak Kami</a>
                 </div>
               </div>
             </div>
@@ -180,10 +171,10 @@
 
                   <div class="row m-15px-b" style="margin-left:0; margin-right:0;">
                     <div class="col-6" style="padding:0;">
-                      <button type="button" id="tabRegisterBtn" class="btn btn-block btn-light" style="border-radius:4px 0 0 4px;">Daftar</button>
+                      <button type="button" id="tabRegisterBtn" class="btn btn-block btn-light" style="border-radius:4px 0 0 4px;">Daftar Baru</button>
                     </div>
                     <div class="col-6" style="padding:0;">
-                      <button type="button" id="tabLoginBtn" class="btn btn-block" style="border-radius:0 4px 4px 0; background:transparent; border:1px solid #fff; color:#fff;">Login</button>
+                      <button type="button" id="tabLoginBtn" class="btn btn-block" style="border-radius:0 4px 4px 0; background:transparent; border:1px solid #fff; color:#fff;">Sudah Punya Akun</button>
                     </div>
                   </div>
 
@@ -253,6 +244,15 @@
                     </div>
                   </form>
 
+                  <div style="margin-top:16px; text-align:center;">
+                    <button type="button" id="trialBtn" class="btn btn-block" style="background:transparent; border:1px dashed #fff; color:#fff;">
+                      🎁 Coba Gratis 10 Menit
+                    </button>
+                    <div id="trialMsg" style="min-height:20px; margin-top:8px;">
+                      <font id="trialMsgText" style="color:#ffffffe8"></font>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
@@ -287,37 +287,6 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6 col-lg-4">
-              <div class="contact-info" style="height:100%; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; text-align:left;">
-                <h6 class="dark-color font-alt" style="margin-bottom:12px;">Media Sosial</h6>
-                <div style="display:flex; gap:16px; align-items:center;">
-                  <a href="https://www.instagram.com/amertaasamedia/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="2" y="2" width="20" height="20" rx="5"/>
-                      <circle cx="12" cy="12" r="4"/>
-                      <circle cx="17.5" cy="6.5" r="1"/>
-                    </svg>
-                  </a>
-                  <a href="https://www.facebook.com/AAMertaasamedia" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M17 2h-3a5 5 0 0 0-5 5v3H6v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                    </svg>
-                  </a>
-                  <a href="https://www.tiktok.com/@amertaasamedia" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M14 3v11a3.5 3.5 0 1 1-3.5-3.5"/>
-                      <path d="M14 3a5 5 0 0 0 5 5"/>
-                    </svg>
-                  </a>
-                  <a href="https://www.youtube.com/@amertaasamedia" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="2" y="5" width="20" height="14" rx="4"/>
-                      <path d="M10 9.5v5l4.5-2.5z"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -327,7 +296,7 @@
       <div class="footer-copy">
         <div class="row">
           <div class="col-12">
-            <p>&copy; 2026 PT. Amerta Asa Media (SpiderSpot) - Network Operations Center</p>
+            <p>&copy; 2026 PT. Amerta Asa Media (Spiderwave) - Network Operations Center</p>
           </div>
         </div>
       </div>
@@ -347,6 +316,7 @@
     <script>
       const params = new URLSearchParams(window.location.search);
       const routerAsal = params.get('router') || 'unknown';
+      const macAddress = params.get('mac') || '';
 
       // Variabel bawaan MikroTik — hanya terisi kalau redirect dari alogin.html
       // menyertakannya di URL. Kalau kosong (misal test langsung di browser),
@@ -520,6 +490,44 @@
         // Langsung submit ke hotspot — MikroTik/RADIUS yang validasi.
         // Kalau salah, user akan diarahkan MikroTik ke halaman gagal login (rlogin.html).
         doHotspotLogin(username, password, loginMsgText);
+      });
+
+      const trialBtn = document.getElementById('trialBtn');
+      const trialMsgText = document.getElementById('trialMsgText');
+
+      trialBtn.addEventListener('click', async function () {
+        trialBtn.disabled = true;
+        trialMsgText.style.color = '#ffffffe8';
+        trialMsgText.textContent = 'Mendaftarkan trial 10 menit...';
+
+        if (!macAddress) {
+          trialMsgText.style.color = '#ffb3b3';
+          trialMsgText.textContent = 'Perangkat tidak terdeteksi. Coba muat ulang halaman dari Wi-Fi.';
+          trialBtn.disabled = false;
+          return;
+        }
+
+        try {
+          const res = await fetch('/trial', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ mac: macAddress, router_asal: routerAsal }),
+          });
+          const data = await res.json();
+
+          if (!data.ok) {
+            trialMsgText.style.color = '#ffb3b3';
+            trialMsgText.textContent = data.message;
+            trialBtn.disabled = false;
+            return;
+          }
+
+          doHotspotLogin(data.username, data.password, trialMsgText);
+        } catch (err) {
+          trialMsgText.style.color = '#ffb3b3';
+          trialMsgText.textContent = 'Gagal menghubungi server, coba lagi.';
+          trialBtn.disabled = false;
+        }
       });
     </script>
   </body>
