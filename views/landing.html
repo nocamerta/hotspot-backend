@@ -500,13 +500,6 @@
         trialMsgText.style.color = '#ffffffe8';
         trialMsgText.textContent = 'Mendaftarkan trial 10 menit...';
 
-        if (!macAddress) {
-          trialMsgText.style.color = '#ffb3b3';
-          trialMsgText.textContent = 'Perangkat tidak terdeteksi. Coba muat ulang halaman dari Wi-Fi.';
-          trialBtn.disabled = false;
-          return;
-        }
-
         try {
           const res = await fetch('/trial', {
             method: 'POST',
