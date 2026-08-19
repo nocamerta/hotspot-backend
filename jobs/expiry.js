@@ -13,6 +13,12 @@ const MAX_ACCOUNT_AGE_DAYS = parseInt(process.env.MAX_ACCOUNT_AGE_DAYS || '30', 
  *     berapapun aktifnya user itu (hard cap)
  *  3. Sudah lewat expired_at yang di-set khusus saat dibuat (dipakai untuk
  *     trial 10 menit — masa berlakunya jauh lebih pendek dari 2 aturan di atas)
+ *
+ * User TRIAL (username diawali "trial-") begitu expired langsung DIHAPUS
+ * TOTAL dari active_users (bukan cuma ditandai expired) — karena tidak ada
+ * gunanya disimpan (tidak dipakai buat histori/reuse username seperti user
+ * reguler). User reguler tetap ditandai status='expired' saja (dipertahankan
+ * untuk fitur reuse username kalau daftar ulang).
  */
 async function cleanupExpiredActiveUsers() {
   const conn = await pool.getConnection();
@@ -32,8 +38,14 @@ async function cleanupExpiredActiveUsers() {
 
     for (const row of expired) {
       await conn.query(`DELETE FROM radcheck WHERE username = ?`, [row.username]);
-      await conn.query(`UPDATE active_users SET status = 'expired' WHERE id = ?`, [row.id]);
-      console.log(`[expiry] user expired & dihapus dari radcheck: ${row.username}`);
+
+      if (row.username.startsWith('trial-')) {
+        await conn.query(`DELETE FROM active_users WHERE id = ?`, [row.id]);
+        console.log(`[expiry] trial expired & DIHAPUS TOTAL dari active_users: ${row.username}`);
+      } else {
+        await conn.query(`UPDATE active_users SET status = 'expired' WHERE id = ?`, [row.id]);
+        console.log(`[expiry] user expired & dihapus dari radcheck: ${row.username}`);
+      }
     }
   } catch (err) {
     console.error('[expiry] error cleanup active_users:', err.message);
@@ -63,13 +75,12 @@ async function cleanupStalePendingUsers() {
 }
 
 function startExpiryJobs() {
-  // Jalan tiap 1 menit (dulu 5 menit — diperketat supaya trial 10 menit
-  // ditegakkan lebih presisi, bukan meleset sampai 5 menit)
+  // Jalan tiap 1 menit — supaya trial 10 menit ditegakkan presisi
   cron.schedule('* * * * *', () => {
     cleanupExpiredActiveUsers();
     cleanupStalePendingUsers();
   });
-  console.log(`[expiry] cron job aktif (tiap 1 menit) — inaktif ${INACTIVITY_EXPIRY_DAYS} hari, umur akun ${MAX_ACCOUNT_AGE_DAYS} hari, atau expired_at custom (trial)`);
+  console.log(`[expiry] cron job aktif (tiap 1 menit) — inaktif ${INACTIVITY_EXPIRY_DAYS} hari, umur akun ${MAX_ACCOUNT_AGE_DAYS} hari, atau expired_at custom (trial, langsung dihapus total)`);
 }
 
 module.exports = { startExpiryJobs };
