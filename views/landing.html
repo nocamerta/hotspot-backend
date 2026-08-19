@@ -16,6 +16,13 @@
     <link href="/static/css/style.css" rel="stylesheet">
     <link href="/static/css/color/default.css" rel="stylesheet" id="color_theme">
     <style>
+      /* PENGAMAN OVERFLOW HORIZONTAL — akar masalah tampilan tidak proporsional di HP */
+      html, body { max-width: 100%; overflow-x: hidden; }
+      #price, #home, #contact { max-width: 100%; overflow: hidden; position: relative; }
+      .shapes-box { overflow: hidden; }
+      .shapes-box span { display: block; }
+      #particles_effect { max-width: 100%; overflow: hidden; }
+
       /* Perbaikan responsif tambahan */
       .price-table-01:hover {
         margin-top: 0 !important;       /* batalkan efek yang menggeser layout */
