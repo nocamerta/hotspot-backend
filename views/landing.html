@@ -17,6 +17,11 @@
     <link href="/static/css/color/default.css" rel="stylesheet" id="color_theme">
     <style>
       /* Perbaikan responsif tambahan */
+      .price-table-01:hover {
+        margin-top: 0 !important;       /* batalkan efek yang menggeser layout */
+        transform: translateY(-10px);   /* animasi "naik" versi aman, murni visual */
+        transition: transform 0.3s ease;
+      }
       .price-table-01 { height: 100%; display: flex; flex-direction: column; }
       .price-body { flex: 1; }
       #home .container { padding-left: 30px; padding-right: 30px; }
