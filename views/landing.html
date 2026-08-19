@@ -52,6 +52,32 @@
         #price { margin-top: 30px; } 
         #price .container { padding-left: 20px; padding-right: 20px; }
         #price h4 { font-size: 0.95rem !important; }
+
+        /* Elemen ini punya width tetap (bukan max-width) di style.css bawaan,
+           sehingga tidak menyusut di layar sempit dan bikin seluruh halaman meluber.
+           Paksa mereka mengikuti lebar layar. */
+        #home .container,
+        #home .row,
+        #home [class*="col-"],
+        #home .subscribe-block,
+        #home .card-block,
+        #home #registerForm,
+        #home #loginForm {
+          width: 100% !important;
+          max-width: 100% !important;
+          box-sizing: border-box !important;
+        }
+        #home #registerForm .row,
+        #home #loginForm .row {
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+        }
+        #home #registerForm .row > [class*="col-"],
+        #home #loginForm .row > [class*="col-"] {
+          padding-left: 8px !important;
+          padding-right: 8px !important;
+        }
+        #home .card-block { padding-left: 16px !important; padding-right: 16px !important; }
       }
       /* Tombol tab Daftar/Login: cegah teks meluber di layar sempit */
       #tabRegisterBtn, #tabLoginBtn {
