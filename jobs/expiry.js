@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const pool = require('../config/db');
+const { disconnectSession } = require('../services/radiusDisconnect');
 
 const PENDING_EXPIRY_MINUTES = parseInt(process.env.PENDING_EXPIRY_MINUTES || '15', 10);
 const INACTIVITY_EXPIRY_DAYS = parseInt(process.env.INACTIVITY_EXPIRY_DAYS || '7', 10);
@@ -8,23 +9,22 @@ const MAX_ACCOUNT_AGE_DAYS = parseInt(process.env.MAX_ACCOUNT_AGE_DAYS || '30', 
 /**
  * Expire akun kalau salah satu dari 3 kondisi terpenuhi:
  *  1. Tidak ada aktivitas login (radacct) selama INACTIVITY_EXPIRY_DAYS hari
- *     (dihitung dari created_at kalau belum pernah login sama sekali)
- *  2. Sudah lebih dari MAX_ACCOUNT_AGE_DAYS hari sejak tanggal daftar,
- *     berapapun aktifnya user itu (hard cap)
- *  3. Sudah lewat expired_at yang di-set khusus saat dibuat (dipakai untuk
- *     trial 10 menit — masa berlakunya jauh lebih pendek dari 2 aturan di atas)
+ *  2. Sudah lebih dari MAX_ACCOUNT_AGE_DAYS hari sejak tanggal daftar (hard cap)
+ *  3. Sudah lewat expired_at custom (dipakai trial 10 menit)
  *
- * User TRIAL (username diawali "trial-") begitu expired langsung DIHAPUS
- * TOTAL dari active_users (bukan cuma ditandai expired) — karena tidak ada
- * gunanya disimpan (tidak dipakai buat histori/reuse username seperti user
- * reguler). User reguler tetap ditandai status='expired' saja (dipertahankan
- * untuk fitur reuse username kalau daftar ulang).
+ * Setiap kali expired, SELAIN hapus radcheck (cegah login baru), kita juga
+ * kirim RADIUS Disconnect-Request supaya sesi yang KEBETULAN masih aktif
+ * saat itu juga langsung diputus paksa — tidak nunggu idle-timeout 8 jam.
+ *
+ * User TRIAL (username diawali "trial-") dihapus TOTAL dari active_users.
+ * User reguler cuma ditandai status='expired' (dipertahankan untuk reuse
+ * username kalau daftar ulang).
  */
 async function cleanupExpiredActiveUsers() {
   const conn = await pool.getConnection();
   try {
     const [expired] = await conn.query(
-      `SELECT au.id, au.username, au.created_at AS reg_date, au.expired_at AS exp_at,
+      `SELECT au.id, au.username, au.router_asal, au.created_at AS reg_date, au.expired_at AS exp_at,
               COALESCE(MAX(ra.acctstarttime), au.created_at) AS last_used
        FROM active_users au
        LEFT JOIN radacct ra ON ra.username = au.username
@@ -38,6 +38,10 @@ async function cleanupExpiredActiveUsers() {
 
     for (const row of expired) {
       await conn.query(`DELETE FROM radcheck WHERE username = ?`, [row.username]);
+
+      // Jaga-jaga: kalau kebetulan masih online SAAT expired terdeteksi,
+      // paksa putus sekarang juga (tidak nunggu idle-timeout 8 jam).
+      await disconnectSession(row.username, row.router_asal);
 
       if (row.username.startsWith('trial-')) {
         await conn.query(`DELETE FROM active_users WHERE id = ?`, [row.id]);
@@ -75,12 +79,11 @@ async function cleanupStalePendingUsers() {
 }
 
 function startExpiryJobs() {
-  // Jalan tiap 1 menit — supaya trial 10 menit ditegakkan presisi
   cron.schedule('* * * * *', () => {
     cleanupExpiredActiveUsers();
     cleanupStalePendingUsers();
   });
-  console.log(`[expiry] cron job aktif (tiap 1 menit) — inaktif ${INACTIVITY_EXPIRY_DAYS} hari, umur akun ${MAX_ACCOUNT_AGE_DAYS} hari, atau expired_at custom (trial, langsung dihapus total)`);
+  console.log(`[expiry] cron job aktif (tiap 1 menit) — inaktif ${INACTIVITY_EXPIRY_DAYS} hari, umur akun ${MAX_ACCOUNT_AGE_DAYS} hari, atau expired_at custom (trial) — plus RADIUS Disconnect paksa putus sesi aktif`);
 }
 
 module.exports = { startExpiryJobs };
