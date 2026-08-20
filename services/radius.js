@@ -2,10 +2,15 @@ const pool = require('../config/db');
 
 /**
  * Insert/replace ke radcheck + upsert ke active_users. Dipakai bareng oleh
- * user reguler (30 hari) maupun trial (10 menit) — beda cuma di ekspresi
- * SQL buat expired_at.
+ * user reguler (30 hari) maupun trial (10 menit).
+ *
+ * sessionTimeoutSeconds (opsional): kalau diisi, sisipkan atribut RADIUS
+ * "Session-Timeout" — MikroTik akan OTOMATIS memutus sesi itu sendiri
+ * persis di detik itu sejak login, tanpa perlu backend kita ikut campur.
+ * Ini beda dari "expired_at" (yang cuma mencegah LOGIN BARU ke depannya,
+ * tidak memutus sesi yang sudah terlanjur aktif).
  */
-async function upsertHotspotUser({ username, password, noTelp, routerAsal, expiredAtSql }) {
+async function upsertHotspotUser({ username, password, noTelp, routerAsal, expiredAtSql, sessionTimeoutSeconds }) {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
@@ -23,6 +28,13 @@ async function upsertHotspotUser({ username, password, noTelp, routerAsal, expir
       `INSERT INTO radcheck (username, attribute, op, value) VALUES (?, 'Cleartext-Password', ':=', ?)`,
       [username, password]
     );
+
+    if (sessionTimeoutSeconds) {
+      await conn.query(
+        `INSERT INTO radcheck (username, attribute, op, value) VALUES (?, 'Session-Timeout', ':=', ?)`,
+        [username, String(sessionTimeoutSeconds)]
+      );
+    }
 
     // Kalau username ini sudah pernah ada di active_users (aktif maupun expired),
     // UPDATE baris itu (reset masa berlaku + password baru) alih-alih insert baris
@@ -82,8 +94,9 @@ async function createHotspotUser({ username, password, noTelp, routerAsal }) {
 }
 
 /**
- * User trial: masa berlaku cuma 10 menit sejak dibuat.
- * noTelp diisi MAC address perangkat (karena trial tidak minta nomor HP).
+ * User trial: masa berlaku 10 menit sejak login (bukan sejak dibuat!) —
+ * pakai RADIUS Session-Timeout supaya MikroTik otomatis putus sendiri
+ * tepat waktu, sekalian expired_at di DB (buat jaga-jaga & cleanup cron).
  */
 async function createTrialUser({ username, password, mac, routerAsal }) {
   return upsertHotspotUser({
@@ -92,6 +105,7 @@ async function createTrialUser({ username, password, mac, routerAsal }) {
     noTelp: mac,
     routerAsal,
     expiredAtSql: 'DATE_ADD(NOW(), INTERVAL 10 MINUTE)',
+    sessionTimeoutSeconds: 600,
   });
 }
 
